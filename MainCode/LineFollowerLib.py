@@ -1,22 +1,10 @@
-# coding: utf-8
-# import RPi.GPGPIO as GPIO
-# import time
-# import Adafruit_GPGPIO.SPI as SPI
-# import Adafruit_MCP3008
-
 import RPi.GPIO as GPIO
 import time
 import Adafruit_GPIO.SPI as SPI
 import Adafruit_MCP3008
-GPIO.setwarnings(False) 
-SPI_PORT   = 0
-SPI_DEVICE = 0
-mcp = Adafruit_MCP3008.MCP3008(spi=SPI.SpiDev(SPI_PORT, SPI_DEVICE))
-target=50
 
 GPIO.setwarnings(False)
 mcp = Adafruit_MCP3008.MCP3008(spi=SPI.SpiDev(0, 0))
-target = 50
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(4, GPIO.OUT)
@@ -69,103 +57,89 @@ def set_motors(right=0, left=0):
         RightMotorBackwards.ChangeDutyCycle(right)
 
 
+timeout = 0
 
 def go_straight():
 
-    r_motor = 0
-    l_motor = 0
-    timeout = 5
+    if left_ir_sensor() > 40 and right_ir_sensor() > 40:
+        r_motor = 0
+        l_motor = 0
 
-    while True:
+        timeout = timeout - 1
+        time.sleep(0.01)
 
-        if left_ir_sensor() > 40 and right_ir_sensor() > 40:
-            print("Junction? {}".format(timeout))
-            r_motor = 0
-            l_motor = 0
+        if timeout <= 0:
+            return False
+    else:
+        if timeout != 5:
+            timeout = 5
 
-            timeout = timeout - 1
-            time.sleep(0.01)
-
-            if timeout <= 0:
-                break
+        if central_ir_sensor() > 50:
+            r_motor = 80
+            l_motor = 90
         else:
-            if timeout != 5:
-                timeout = 5
+            r_motor = 90
+            l_motor = 80
 
-            if central_ir_sensor() > 50:
-                r_motor = 80
-                l_motor = 90
-            else:
-                r_motor = 90
-                l_motor = 80
+    if right_ir_sensor() > 80 and left_ir_sensor() < 80:
+        r_motor = 0
+        l_motor = 50
 
-        if right_ir_sensor() > 80 and left_ir_sensor() < 80:
-            r_motor = 0
-            l_motor = 50
+    if left_ir_sensor() > 80 and right_ir_sensor() < 80:
+        r_motor = 50
+        l_motor = 0
 
-        if left_ir_sensor() > 80 and right_ir_sensor() < 80:
-            r_motor = 50
-            l_motor = 0
+    set_motors(r_motor, l_motor)
+    return True
 
 
-        set_motors(r_motor, l_motor)
-
-
+bounce = 0
 
 def turn(direction):
-    bounc = 0
-    while True:
-        if direction== 1:
-            while left_ir_sensor() > 40 and right_ir_sensor() > 40:
-                r_motor=50
-                l_motor=50
-            
-                
-        
-        if direction==2:
 
-            if central_ir_sensor() > 40:
-                l_motor = -40
-                r_motor = 50
-                if bounc == 0:
-                    bounc = 1
+    if direction == 1:
+        while left_ir_sensor() > 40 and right_ir_sensor() > 40:
+            r_motor = 50
+            l_motor = 50
 
-            if central_ir_sensor() < 40 and bounc >= 1:
-                l_motor = -40
-                r_motor = 50
-                if bounc == 1:
-                    bounc = 2
-                    
-            if central_ir_sensor() > 40 and bounc >= 2:
-                l_motor=0
-                r_motor=0
-                break           
-       
-        if direction == 3:
-            if central_ir_sensor() > 40:
-                r_motor = -40
-                l_motor = 90
-                if bounc == 0:
-                    bounc = 1
+    if direction == 2:
 
-            if central_ir_sensor() < 40 and bounc >= 1:
-                r_motor = -40
-                l_motor = 90
-                if bounc == 1:
-                    bounc = 2
-                    
-            if central_ir_sensor() > 60 and bounc >= 2:
-                r_motor=0
-                l_motor=0
-                break
-               
+        if central_ir_sensor() > 40:
+            l_motor = -40
+            r_motor = 50
+            if bounce == 0:
+                bounce = 1
 
-        set_motors(r_motor, l_motor)
+        if central_ir_sensor() < 40 and bounce >= 1:
+            l_motor = -40
+            r_motor = 50
+            if bounce == 1:
+                bounce = 2
 
+        if central_ir_sensor() > 40 and bounce >= 2:
+            set_motors(0, 0)
+            bounce = 0
+            return False
 
-if __name__ == "__main__":
-    go_straight()
-    print("turn")
-    turn(3)
-    go_straight()
+    if direction == 3:
+        if central_ir_sensor() > 40:
+            r_motor = -40
+            l_motor = 90
+            if bounce == 0:
+                bounce = 1
+
+        if central_ir_sensor() < 40 and bounce >= 1:
+            r_motor = -40
+            l_motor = 90
+            if bounce == 1:
+                bounce = 2
+
+        if central_ir_sensor() > 60 and bounce >= 2:
+            r_motor = 0
+            l_motor = 0
+            bounce = 0
+            return False
+
+    set_motors(r_motor, l_motor)
+    return True
 
