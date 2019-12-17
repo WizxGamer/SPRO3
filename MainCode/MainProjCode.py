@@ -12,6 +12,7 @@ if __name__ == "__main__":
     while True:
         if nav.getAxis() == 0:
             if nav.getOrientation() == 0:
+
                 if not go_straight():
                     Turning(nav.getAxis, nav.getOrientation, route)
                     if route[Progress-1] == 3:      # If we just turned right
@@ -20,7 +21,11 @@ if __name__ == "__main__":
                     elif rout[Progress-1] == 2:     # If we just turned left
                         nav.setOrientation(0)
                         nav.setAxis(1)
+                if metal_sensor_triggered():
+                    cam_function(nav.getX(), nav.getY())
+
             elif nav.getOrientation() == 1:
+
                 if not go_straight():
                     Turning(nav.getAxis, nav.getOrientation, route)
                     if route[Progress-1] == 3:      # If we just turned right
@@ -29,10 +34,13 @@ if __name__ == "__main__":
                     elif rout[Progress-1] == 2:     # If we just turned left
                         nav.setOrientation(0)
                         nav.setAxis(1)
+                pass
+
             else:
                 break
         elif nav.getAxis() == 1:
             if nav.getOrientation() == 0:
+
                 if not go_straight():
                     Turning(nav.getAxis, nav.getOrientation, route)
                     if route[Progress-1] == 3:      # If we just turned right
@@ -41,7 +49,10 @@ if __name__ == "__main__":
                     elif rout[Progress-1] == 2:     # If we just turned left
                         nav.setOrientation(0)
                         nav.setAxis(0)
+                pass
+
             elif nav.getOrientation() == 1:
+
                 if not go_straight():
                     Turning(nav.getAxis, nav.getOrientation, route)
                     if route[Progress-1] == 3:     # If we just turned right
@@ -50,6 +61,8 @@ if __name__ == "__main__":
                     elif route[Progress-1] == 2:   # If we just turned left
                         nav.setOrientation(1)
                         nav.setAxis(0)
+                pass
+
             else:
                 break
         else:
@@ -58,6 +71,7 @@ if __name__ == "__main__":
         time.sleep(0.01)
 
     ##Turn everything off
+    set_motors(0, 0)
     raise Exception("This should absolutely never happen")
 
 def Turning(Axis, Orientation, Route):

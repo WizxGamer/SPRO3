@@ -1,0 +1,2 @@
+All of these files should just be placed in the pi folder, and it should all work
+Path in the Filemover script would have to be changed most likely and it needs to be moving from 2 folders instead of one

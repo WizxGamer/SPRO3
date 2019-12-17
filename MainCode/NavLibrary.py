@@ -30,3 +30,9 @@ class Navigation:
     def setCoordinates(self, x, y):
         self.X_Coordinate = x
         self.Y_Coordinate = y
+
+    def getY(self):
+        return self.Y_Coordinate
+
+    def getX(self):
+        return self.X_Coordinate

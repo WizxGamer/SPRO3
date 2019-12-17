@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang ="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	
+	<!-- Everything in here is explained in RunPage.html-->
+	<style>
+		div.fixed {  
+		  position: fixed;
+		  top: 6px;
+		  right: 6px;
+		  border: 3px solid #000000
+		}
+		.img{
+			border-right:3px solid #000;
+		}
+	</style>
+	<style>
+		.button {
+		  background-color: #008000;
+		  border: none;
+		  color: white;
+		  padding: 20px 32px;
+		  text-align: center;
+		  text-decoration: none;
+		  display: inline-block;
+		  font-size: 48px;
+		  margin: 4px 2px;
+		  cursor: pointer;
+		}
+		.header{
+					  font-size: 48px;
+		}
+	</style>
+	
+	<title>Pi Interface</title>
+</head>
+<body>
+	<h2 id="demo" class="header">TallyBot Web Interface 2.0</h2>
+	<form method="POST">
+		<div>
+			<input type="submit" name="submit_button" class="button" value="Start TallyBot">
+		</div>
+	</form>
+	<div></div>
+
+	<div class="fixed">
+		 <img id=left class="img" src="static/DefaultLeft.jpg" alt="Left Camera" height="486" width="583" align="top"> 
+
+		 <img id=right src="static/DefaultRight.jpg" alt="Right Camera" height="486" width="583" align="top"> 
+	</div>
+</body>
+</html>

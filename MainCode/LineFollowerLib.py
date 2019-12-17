@@ -66,6 +66,7 @@ def go_straight():
         l_motor = 0
 
         timeout = timeout - 1
+        print ("Timeout {}".format(timeout))
         time.sleep(0.01)
 
         if timeout <= 0:
@@ -76,9 +77,9 @@ def go_straight():
 
         if central_ir_sensor() > 50:
             r_motor = 80
-            l_motor = 90
+            l_motor = 100
         else:
-            r_motor = 90
+            r_motor = 100
             l_motor = 80
 
     if right_ir_sensor() > 80 and left_ir_sensor() < 80:
@@ -96,7 +97,7 @@ def go_straight():
 bounce = 0
 
 def turn(direction):
-
+    print ("Middle Sensor: {}, Bounce: {}".format(central_ir_sensor(), bounce))
     if direction == 1:
         while left_ir_sensor() > 40 and right_ir_sensor() > 40:
             r_motor = 50
@@ -143,3 +144,8 @@ def turn(direction):
     set_motors(r_motor, l_motor)
     return True
 
+def cam_function(x, y):
+    pass
+
+def metal_sensor_triggered():
+    return False
