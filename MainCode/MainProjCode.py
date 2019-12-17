@@ -1,13 +1,20 @@
 import threading
 import time
 from NavLibrary import Navigation
-from LineFollowerLib import go_straight, turn
+from LineFollowerLib import go_straight, turn, metal_sensor_triggered, cam_function
+
+Progress = 0
+
+def Turning(Axis, Orientation, Route):
+    global Progress
+    while turn(Route[Progress]):
+        time.sleep(0.01)
+    Progress = Progress + 1
 
 
 if __name__ == "__main__":
     nav = Navigation()
     route = [3, 3, 2, 2, 3, 3, 2, 2]
-    Progress = 0
 
     while True:
         if nav.getAxis() == 0:
@@ -18,7 +25,7 @@ if __name__ == "__main__":
                     if route[Progress-1] == 3:      # If we just turned right
                         nav.setOrientation(1)
                         nav.setAxis(1)
-                    elif rout[Progress-1] == 2:     # If we just turned left
+                    elif route[Progress-1] == 2:     # If we just turned left
                         nav.setOrientation(0)
                         nav.setAxis(1)
                 if metal_sensor_triggered():
@@ -31,7 +38,7 @@ if __name__ == "__main__":
                     if route[Progress-1] == 3:      # If we just turned right
                         nav.setOrientation(1)
                         nav.setAxis(1)
-                    elif rout[Progress-1] == 2:     # If we just turned left
+                    elif route[Progress-1] == 2:     # If we just turned left
                         nav.setOrientation(0)
                         nav.setAxis(1)
                 pass
@@ -46,7 +53,7 @@ if __name__ == "__main__":
                     if route[Progress-1] == 3:      # If we just turned right
                         nav.setOrientation(1)
                         nav.setAxis(0)
-                    elif rout[Progress-1] == 2:     # If we just turned left
+                    elif route[Progress-1] == 2:     # If we just turned left
                         nav.setOrientation(0)
                         nav.setAxis(0)
                 pass
@@ -73,8 +80,3 @@ if __name__ == "__main__":
     ##Turn everything off
     set_motors(0, 0)
     raise Exception("This should absolutely never happen")
-
-def Turning(Axis, Orientation, Route):
-    while turn(Route[Progress]):
-        time.sleep(0.01)
-    Progress = Progress + 1

@@ -60,14 +60,13 @@ def set_motors(right=0, left=0):
 timeout = 0
 
 def go_straight():
-
+    global timeout
     if left_ir_sensor() > 40 and right_ir_sensor() > 40:
         r_motor = 0
         l_motor = 0
 
         timeout = timeout - 1
         print ("Timeout {}".format(timeout))
-        time.sleep(0.01)
 
         if timeout <= 0:
             return False
@@ -97,6 +96,7 @@ def go_straight():
 bounce = 0
 
 def turn(direction):
+    global bounce
     print ("Middle Sensor: {}, Bounce: {}".format(central_ir_sensor(), bounce))
     if direction == 1:
         while left_ir_sensor() > 40 and right_ir_sensor() > 40:
@@ -107,13 +107,13 @@ def turn(direction):
 
         if central_ir_sensor() > 40:
             l_motor = -40
-            r_motor = 50
+            r_motor = 70
             if bounce == 0:
                 bounce = 1
 
         if central_ir_sensor() < 40 and bounce >= 1:
             l_motor = -40
-            r_motor = 50
+            r_motor = 70
             if bounce == 1:
                 bounce = 2
 
@@ -124,13 +124,13 @@ def turn(direction):
 
     if direction == 3:
         if central_ir_sensor() > 40:
-            r_motor = -40
+            r_motor = -50
             l_motor = 90
             if bounce == 0:
                 bounce = 1
 
         if central_ir_sensor() < 40 and bounce >= 1:
-            r_motor = -40
+            r_motor = -50
             l_motor = 90
             if bounce == 1:
                 bounce = 2
