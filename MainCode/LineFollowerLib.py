@@ -3,6 +3,9 @@ import time
 import Adafruit_GPIO.SPI as SPI
 import Adafruit_MCP3008
 
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(17, GPIO.IN)
+
 GPIO.setwarnings(False)
 mcp = Adafruit_MCP3008.MCP3008(spi=SPI.SpiDev(0, 0))
 
@@ -105,6 +108,7 @@ def go_straight():
 
 bounce = 0
 
+
 def turn(direction):
     global bounce
     #print ("Middle Sensor: {}, Bounce: {}".format(central_ir_sensor(), bounce))
@@ -156,5 +160,14 @@ def turn(direction):
 def cam_function(x, y):
     pass
 
+
+bounce2 = 1
+
 def metal_sensor_triggered():
+    global bounce2
+    if GPIO.input(17) == 0 and bounce2 == 1:
+        bounce2 = 0
+        return True
+    elif GPIO.input(17) == 1 and bounce2 == 0:
+        bounce2 = 1
     return False
