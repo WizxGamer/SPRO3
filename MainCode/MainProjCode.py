@@ -14,9 +14,11 @@ def Turning(Axis, Orientation, Route):
 
 if __name__ == "__main__":
     nav = Navigation()
-    route = [3, 3, 2, 2, 3, 3, 2, 2]
+    route = [3, 3, 2, 2]
 
     while True:
+        if Progress == 4:
+            break
         if nav.getAxis() == 0:
             if nav.getOrientation() == 0:
 

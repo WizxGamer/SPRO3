@@ -71,15 +71,25 @@ def go_straight():
         if timeout <= 0:
             return False
     else:
-        if timeout != 5:
-            timeout = 5
+        if timeout != 3:
+            timeout = 3
 
         if central_ir_sensor() > 50:
-            r_motor = 80
+            r_motor = 90
             l_motor = 100
         else:
             r_motor = 100
-            l_motor = 80
+            l_motor = 90
+
+        if central_ir_sensor() > 80:
+            #print ("aggTurn {}".format(central_ir_sensor()))
+            r_motor = 70
+            l_motor = 100
+        elif central_ir_sensor() < 20:
+            #print ("aggTurn {}".format(central_ir_sensor()))
+            r_motor = 100
+            l_motor = 70
+
 
     if right_ir_sensor() > 80 and left_ir_sensor() < 80:
         r_motor = 0
@@ -97,7 +107,7 @@ bounce = 0
 
 def turn(direction):
     global bounce
-    print ("Middle Sensor: {}, Bounce: {}".format(central_ir_sensor(), bounce))
+    #print ("Middle Sensor: {}, Bounce: {}".format(central_ir_sensor(), bounce))
     if direction == 1:
         while left_ir_sensor() > 40 and right_ir_sensor() > 40:
             r_motor = 50
@@ -106,14 +116,14 @@ def turn(direction):
     if direction == 2:
 
         if central_ir_sensor() > 40:
-            l_motor = -40
-            r_motor = 70
+            l_motor = -50
+            r_motor = 100
             if bounce == 0:
                 bounce = 1
 
         if central_ir_sensor() < 40 and bounce >= 1:
-            l_motor = -40
-            r_motor = 70
+            l_motor = -50
+            r_motor = 100
             if bounce == 1:
                 bounce = 2
 
@@ -125,19 +135,18 @@ def turn(direction):
     if direction == 3:
         if central_ir_sensor() > 40:
             r_motor = -50
-            l_motor = 90
+            l_motor = 100
             if bounce == 0:
                 bounce = 1
 
         if central_ir_sensor() < 40 and bounce >= 1:
             r_motor = -50
-            l_motor = 90
+            l_motor = 100
             if bounce == 1:
                 bounce = 2
 
         if central_ir_sensor() > 60 and bounce >= 2:
-            r_motor = 0
-            l_motor = 0
+            set_motors(0, 0)
             bounce = 0
             return False
 
