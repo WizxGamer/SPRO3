@@ -3,6 +3,11 @@ import time
 import Adafruit_GPIO.SPI as SPI
 import Adafruit_MCP3008
 
+BaseSpeed = 50
+MediumSpeed = 45
+SlowSpeed = 20
+
+#region gpio setup
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(17, GPIO.IN)
 
@@ -25,6 +30,12 @@ RightMotorForwards.start(0)
 GPIO.setup(18, GPIO.OUT)
 RightMotorBackwards = GPIO.PWM(18, 1000)
 RightMotorBackwards.start(0)
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(22, GPIO.OUT)
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(27, GPIO.OUT)
+#endregion
 
 def central_ir_sensor():
     return (mcp.read_adc(0) - 50) / 8.5
@@ -61,47 +72,44 @@ def set_motors(right=0, left=0):
 
 
 timeout = 0
+l_motor = 0
+r_motor = 0
 
 def go_straight():
     global timeout
+    global l_motor
+    global r_motor
+
     if left_ir_sensor() > 40 and right_ir_sensor() > 40:
         r_motor = 0
         l_motor = 0
 
         timeout = timeout - 1
-        print ("Timeout {}".format(timeout))
 
         if timeout <= 0:
+            print "Junction"
             return False
     else:
         if timeout != 3:
             timeout = 3
 
         if central_ir_sensor() > 50:
-            r_motor = 90
-            l_motor = 100
+            r_motor = MediumSpeed
+            l_motor = BaseSpeed
         else:
-            r_motor = 100
-            l_motor = 90
+            r_motor = BaseSpeed
+            l_motor = MediumSpeed
 
         if central_ir_sensor() > 80:
             #print ("aggTurn {}".format(central_ir_sensor()))
-            r_motor = 70
-            l_motor = 100
+            r_motor = SlowSpeed
+            l_motor = BaseSpeed
         elif central_ir_sensor() < 20:
             #print ("aggTurn {}".format(central_ir_sensor()))
-            r_motor = 100
-            l_motor = 70
+            r_motor = BaseSpeed
+            l_motor = SlowSpeed
 
-
-    if right_ir_sensor() > 80 and left_ir_sensor() < 80:
-        r_motor = 0
-        l_motor = 50
-
-    if left_ir_sensor() > 80 and right_ir_sensor() < 80:
-        r_motor = 50
-        l_motor = 0
-
+    #print ("Middle Sensor: {}, Left: {} Right: {}".format(central_ir_sensor(), l_motor, r_motor))
     set_motors(r_motor, l_motor)
     return True
 
@@ -111,45 +119,46 @@ bounce = 0
 
 def turn(direction):
     global bounce
+    global r_motor
+    global l_motor
+
     #print ("Middle Sensor: {}, Bounce: {}".format(central_ir_sensor(), bounce))
     if direction == 1:
         while left_ir_sensor() > 40 and right_ir_sensor() > 40:
-            r_motor = 50
-            l_motor = 50
+            r_motor = SlowSpeed
+            l_motor = SlowSpeed
 
     if direction == 2:
+        l_motor = -SlowSpeed
+        r_motor = BaseSpeed
 
-        if central_ir_sensor() > 40:
-            l_motor = -50
-            r_motor = 100
+        if central_ir_sensor() > 50:
             if bounce == 0:
                 bounce = 1
 
-        if central_ir_sensor() < 40 and bounce >= 1:
-            l_motor = -50
-            r_motor = 100
+        if central_ir_sensor() < 60 and bounce >= 1:
             if bounce == 1:
                 bounce = 2
 
-        if central_ir_sensor() > 40 and bounce >= 2:
+        if central_ir_sensor() > 90 and bounce >= 2:
             set_motors(0, 0)
             bounce = 0
             return False
 
     if direction == 3:
-        if central_ir_sensor() > 40:
-            r_motor = -50
-            l_motor = 100
+
+        r_motor = -SlowSpeed
+        l_motor = BaseSpeed
+
+        if central_ir_sensor() > 50:
             if bounce == 0:
                 bounce = 1
 
-        if central_ir_sensor() < 40 and bounce >= 1:
-            r_motor = -50
-            l_motor = 100
+        if central_ir_sensor() < 60 and bounce >= 1:
             if bounce == 1:
                 bounce = 2
 
-        if central_ir_sensor() > 60 and bounce >= 2:
+        if central_ir_sensor() > 90 and bounce >= 2:
             set_motors(0, 0)
             bounce = 0
             return False
@@ -158,7 +167,12 @@ def turn(direction):
     return True
 
 def cam_function(x, y):
-    pass
+    set_motors(0, 0)
+    GPIO.output(22,1)
+    GPIO.output(27,1)
+    time.sleep(2)
+    GPIO.output(22, 0)
+    GPIO.output(27, 0)
 
 
 bounce2 = 1

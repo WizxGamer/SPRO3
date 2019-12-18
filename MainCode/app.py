@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for
+import threading
 
 app = Flask(__name__)
 
@@ -28,8 +29,6 @@ def ReportPage():
         ##here send info to main script
         return redirect(url_for("RunPage"))  ## You get it by now
     return render_template("ReportPage.html")
-
-
 
 
 if __name__ == "__main__":
