@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang ="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	
+	<script type="text/javascript" src="static/JQuery.js"></script>
+	<Script language="javascript">
+	
+	
+	var x = -1;
+	var y = -1;
+	
+	function LPath()
+	{			
+		return "/static/L"+ x +".jpg" 		//Just a shorthand function
+	}
+	function RPath()
+	{			
+		return "/static/R"+ y +".jpg"
+	}
+	
+	
+	
+	function myFunction() {
+		x = x + 1 ; 
+		y = y + 1 ; 
+		$.ajaxSetup({cache: false})
+	
+		$.get(LPath())  	//get file in static folder named Lx.jpg
+		.done(function()  	//File has been gotten
+		{ 
+			document.getElementById("left").src = LPath(); 	//change the source of the left image to be the Lx.jpg, updating the image
+		}).fail(function()  								//If file has not been found
+		{ 
+			x = x + 1;  		//Increment and try again
+			$.get(LPath())
+			.done(function() 
+			{ 
+				document.getElementById("left").src = null;
+				document.getElementById("left").src = LPath(); 
+			}).fail(function() 
+			{ 
+				x = x - 2 ; 	//If also fails, subtract the 2 that has been added to x
+			})
+				
+		})
+			
+		$.get(RPath())  	//Exact same, just with the right photo
+		.done(function() 
+		{ 
+			document.getElementById("right").src = RPath(); 
+		}).fail(function() 
+		{ 
+			y = y + 1 ; 
+			$.get(RPath())
+			.done(function() 
+			{ 
+				document.getElementById("right").src = RPath(); 
+			}).fail(function() 
+			{ 
+				y = y - 2 ; 
+			})
+			
+		})
+	}
+	
+	//Every 500ms envoke the function, updating images if one with and id of 1 or 2 higher is in the static folder -->
+	window.setInterval(function(){	
+	myFunction();
+	}, 500);
+	
+	</Script>
+	
+	<style>
+		div.fixed {			
+		  position: fixed;
+		  top: 6px;
+		  right: 6px;
+		  border: 3px solid #000000
+		}
+		.button {
+		  background-color: #FF0000;
+		  border: none;
+		  color: white;
+		  padding: 20px 32px;
+		  text-align: center;
+		  text-decoration: none;
+		  display: inline-block;
+		  font-size: 48px;
+		  margin: 4px 2px;
+		  cursor: pointer;
+		}
+		.header{			
+			font-size: 48px;
+		}
+		.img{
+			border-right:3px solid #000;	
+		}
+	</style>
+	
+	<title>Pi Interface</title>  
+	<!-- This is the actual Website, Title is just the name of the tab-->
+</head>
+<body>
+	<h2 id="demo" class="header">TallyBot Running</h2> <!-- Header -->
+	<form method="POST">
+		<div>
+			<!-- Button that will post the form to flask when pressed, Nothingh actually gets passed though, just the fact a post request has been sent -->
+			<input type="submit" name="submit_button" class="button" value="Stop TallyBot">  
+		</div>
+	<div></div>
+
+	<div class="fixed"> 
+		<!-- A block using the fixed css, everything in here will be in the top right corner -->
+		
+		 <img id=left class="img" src="static/DefaultLeft.jpg" alt="Left Camera" height="486" width="583" align="top">  
+		 <!-- Left Image with bar on its right side, just dispays default image until updated by function-->
+
+		 <img id=right src="static/DefaultRight.jpg" alt="Right Camera" height="486" width="583" align="top"> 
+		 <!-- Right Picture, also just default until updated -->
+	</div>
+</body>
+</html>
